@@ -1,0 +1,265 @@
+.admin-panel {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+  padding: 40px 20px;
+}
+
+.admin-login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 80vh;
+}
+
+.admin-login-card {
+  background: white;
+  padding: 40px;
+  border-radius: 16px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  max-width: 400px;
+  width: 100%;
+}
+
+.admin-login-card h2 {
+  color: var(--primary-color);
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.btn-block {
+  width: 100%;
+}
+
+.admin-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+  background: white;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header h1 {
+  color: var(--primary-color);
+  margin: 0;
+  font-size: 32px;
+}
+
+.admin-tabs {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+}
+
+.tab-btn {
+  padding: 12px 24px;
+  border: none;
+  background: white;
+  color: var(--text-dark);
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.tab-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.tab-btn.active {
+  background: var(--primary-color);
+  color: white;
+}
+
+.admin-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.selection-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+  padding-bottom: 20px;
+  border-bottom: 2px solid #eee;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.selection-header h2 {
+  margin: 0;
+  color: var(--primary-color);
+}
+
+.selection-info {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.selection-count {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--primary-color);
+  padding: 8px 16px;
+  background: #e3f2fd;
+  border-radius: 8px;
+}
+
+.proposals-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 24px;
+}
+
+.proposal-card {
+  background: #f8f9fa;
+  border-radius: 12px;
+  padding: 24px;
+  border: 3px solid transparent;
+  transition: all 0.3s ease;
+}
+
+.proposal-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+}
+
+.proposal-card.selected {
+  border-color: var(--success);
+  background: linear-gradient(to bottom, #d4edda 0%, #f8f9fa 20%);
+}
+
+.proposal-card.temp-selected {
+  border-color: var(--primary-color);
+  background: linear-gradient(to bottom, #cfe2ff 0%, #f8f9fa 20%);
+}
+
+.proposal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+  gap: 12px;
+}
+
+.proposal-header h3 {
+  margin: 0 0 8px 0;
+  color: var(--primary-color);
+  font-size: 20px;
+}
+
+.proposal-header .project-title {
+  color: #666;
+  font-size: 14px;
+  margin: 0;
+}
+
+.status-badge {
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.status-badge.submitted {
+  background-color: #ffc107;
+  color: #333;
+}
+
+.status-badge.selected {
+  background-color: var(--success);
+  color: white;
+}
+
+.status-badge.rejected {
+  background-color: var(--danger);
+  color: white;
+}
+
+.proposal-students {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.student-tag {
+  background: white;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  color: #555;
+  border: 1px solid #ddd;
+}
+
+.proposal-actions {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.proposal-actions button {
+  flex: 1;
+}
+
+.proposal-date {
+  font-size: 13px;
+  color: #888;
+  font-style: italic;
+  text-align: right;
+}
+
+.announcement-form,
+.deadline-form {
+  max-width: 700px;
+}
+
+.current-deadline {
+  background: #e3f2fd;
+  padding: 20px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  border-left: 5px solid var(--primary-color);
+}
+
+.current-deadline p {
+  margin: 8px 0;
+}
+
+.deadline-date {
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+  .admin-header {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+
+  .selection-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .proposals-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .proposal-actions {
+    flex-direction: column;
+  }
+}
