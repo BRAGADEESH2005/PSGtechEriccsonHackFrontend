@@ -1,238 +1,523 @@
+/* Selected Teams Page */
 .selected-teams-page {
   min-height: 100vh;
-  padding: 40px 20px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-}
-
-.selected-teams-page .container {
-  max-width: 1400px;
-}
-
-.selected-teams-page .page-header {
-  text-align: center;
-  margin-bottom: 50px;
-  color: white;
-}
-
-.selected-teams-page .page-header h1 {
-  font-size: 48px;
-  margin-bottom: 12px;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-.selected-teams-page .page-subtitle {
-  font-size: 18px;
-  opacity: 0.95;
-}
-
-.teams-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 30px;
-}
-
-.team-card {
-  background: white;
-  border-radius: 16px;
-  padding: 28px;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
-  transition: all 0.3s ease;
+  background: linear-gradient(135deg, #1e3c72 0%, #2a5298 50%, #1e88e5 100%);
+  padding: 100px 20px 60px;
   position: relative;
-  animation: fadeInScale 0.5s ease;
+  overflow: hidden;
 }
 
-@keyframes fadeInScale {
+.selected-teams-page::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 80px 80px;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+.container {
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+}
+
+/* Page Header */
+.page-header {
+  text-align: center;
+  margin-bottom: 60px;
+  animation: fadeInUp 0.8s ease;
+}
+
+@keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: scale(0.9);
+    transform: translateY(30px);
   }
   to {
     opacity: 1;
-    transform: scale(1);
+    transform: translateY(0);
   }
 }
 
-.team-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+.page-header h1 {
+  font-size: 56px;
+  font-weight: 800;
+  color: white;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  background: linear-gradient(135deg, #fff 0%, #64b5f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
+.page-subtitle {
+  font-size: 20px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Loading State */
+.loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  gap: 20px;
+}
+
+.spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(255, 255, 255, 0.2);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading p {
+  color: white;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+/* Alert */
+.alert {
+  padding: 16px 24px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  font-size: 16px;
+  font-weight: 600;
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.alert-danger {
+  background: rgba(244, 67, 54, 0.2);
+  border: 1px solid rgba(244, 67, 54, 0.4);
+  color: white;
+  backdrop-filter: blur(10px);
+}
+
+/* Teams Container */
+.teams-container {
+  animation: fadeIn 0.8s ease 0.2s both;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Empty State */
+.empty-state {
+  text-align: center;
+  padding: 80px 20px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 24px;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.empty-icon {
+  font-size: 80px;
+  margin-bottom: 24px;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.empty-state h3 {
+  font-size: 28px;
+  font-weight: 700;
+  color: white;
+  margin-bottom: 12px;
+}
+
+.empty-state p {
+  font-size: 18px;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* Teams Grid */
+.teams-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 32px;
+  margin-top: 40px;
+}
+
+/* Team Card */
+.team-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 24px;
+  padding: 32px;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  animation: slideUp 0.6s ease both;
+  overflow: hidden;
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.team-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 6px;
+  background: linear-gradient(135deg, #1e3c72 0%, #1e88e5 100%);
+}
+
+.team-card::after {
+  content: '';
+  position: absolute;
+  top: -100%;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(30, 60, 114, 0.05) 0%, rgba(30, 136, 229, 0.05) 100%);
+  transition: top 0.4s ease;
+}
+
+.team-card:hover {
+  transform: translateY(-12px);
+  box-shadow: 0 20px 60px rgba(30, 60, 114, 0.3);
+}
+
+.team-card:hover::after {
+  top: 0;
+}
+
+/* Stagger animation for cards */
+.team-card:nth-child(1) { animation-delay: 0.1s; }
+.team-card:nth-child(2) { animation-delay: 0.2s; }
+.team-card:nth-child(3) { animation-delay: 0.3s; }
+.team-card:nth-child(4) { animation-delay: 0.4s; }
+.team-card:nth-child(5) { animation-delay: 0.5s; }
+.team-card:nth-child(6) { animation-delay: 0.6s; }
+
+/* Team Rank */
 .team-rank {
   position: absolute;
-  top: 16px;
-  right: 16px;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  width: 45px;
-  height: 45px;
+  top: 24px;
+  right: 24px;
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, #1e3c72 0%, #1e88e5 100%);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 800;
   font-size: 18px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  font-weight: 800;
+  color: white;
+  box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
+  z-index: 2;
 }
 
+/* Team Logo */
 .team-logo-container {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 20px;
+  width: 100px;
+  height: 100px;
+  margin: 0 auto 24px;
+  position: relative;
+  z-index: 2;
 }
 
 .team-logo {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 4px solid #f0f0f0;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  border-radius: 20px;
+  background: white;
+  padding: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.team-card:hover .team-logo {
+  transform: scale(1.1) rotate(5deg);
 }
 
 .team-logo-placeholder {
-  width: 100px;
-  height: 100px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1e3c72 0%, #1e88e5 100%);
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 42px;
+  font-size: 48px;
   font-weight: 800;
   color: white;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 8px 24px rgba(30, 60, 114, 0.3);
+  transition: transform 0.3s ease;
 }
 
+.team-card:hover .team-logo-placeholder {
+  transform: scale(1.1) rotate(5deg);
+}
+
+/* Team Name & Title */
 .team-name {
   font-size: 24px;
-  color: var(--primary-color);
-  text-align: center;
+  font-weight: 800;
+  color: #1e3c72;
   margin-bottom: 8px;
-  font-weight: 700;
+  text-align: center;
+  position: relative;
+  z-index: 2;
 }
 
 .project-title {
   font-size: 16px;
-  color: #666;
-  text-align: center;
+  font-weight: 600;
+  color: #2a5298;
   margin-bottom: 24px;
-  font-weight: 500;
+  text-align: center;
   line-height: 1.4;
+  position: relative;
+  z-index: 2;
 }
 
+/* Team Members */
 .team-members {
-  background: #f8f9fa;
-  border-radius: 12px;
-  padding: 16px;
+  background: rgba(30, 60, 114, 0.05);
+  border-radius: 16px;
+  padding: 20px;
   margin-bottom: 20px;
+  position: relative;
+  z-index: 2;
 }
 
 .members-header {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 12px;
-  font-size: 14px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  font-weight: 700;
+  color: #1e3c72;
 }
 
 .members-icon {
-  font-size: 18px;
+  font-size: 20px;
 }
 
 .members-list {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
 }
 
 .member-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 0;
-  border-bottom: 1px solid #e0e0e0;
+  padding: 12px 16px;
+  background: white;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(30, 60, 114, 0.1);
 }
 
-.member-item:last-child {
-  border-bottom: none;
+.member-item:hover {
+  transform: translateX(6px);
+  box-shadow: 0 4px 12px rgba(30, 60, 114, 0.1);
 }
 
 .member-name {
   font-size: 15px;
-  color: var(--text-dark);
-  font-weight: 500;
+  font-weight: 600;
+  color: #1e3c72;
 }
 
 .member-dept {
-  padding: 4px 12px;
-  border-radius: 12px;
   font-size: 12px;
   font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .dept-ece {
-  background-color: #e3f2fd;
-  color: #1976d2;
+  background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+  color: white;
 }
 
 .dept-cse {
-  background-color: #f3e5f5;
-  color: #7b1fa2;
+  background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+  color: white;
 }
 
 .dept-rae {
-  background-color: #fff3e0;
-  color: #e65100;
+  background: linear-gradient(135deg, #FF9800 0%, #F57C00 100%);
+  color: white;
 }
 
+/* Team Badge */
 .team-badge {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #1e3c72 0%, #1e88e5 100%);
+  border-radius: 12px;
   color: white;
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
   font-size: 14px;
+  font-weight: 700;
+  position: relative;
+  z-index: 2;
+  box-shadow: 0 4px 16px rgba(30, 60, 114, 0.3);
 }
 
 .badge-icon {
   font-size: 18px;
+  animation: pulse 2s ease-in-out infinite;
 }
 
-.empty-state {
-  text-align: center;
-  padding: 100px 20px;
-  color: white;
-}
-
-.empty-state .empty-icon {
-  font-size: 80px;
-  margin-bottom: 24px;
-  opacity: 0.8;
-}
-
-.empty-state h3 {
-  font-size: 28px;
-  margin-bottom: 12px;
-}
-
-.empty-state p {
-  font-size: 16px;
-  opacity: 0.9;
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .teams-grid {
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: 28px;
+  }
 }
 
 @media (max-width: 768px) {
-  .selected-teams-page .page-header h1 {
-    font-size: 36px;
+  .selected-teams-page {
+    padding: 80px 15px 40px;
+  }
+
+  .page-header h1 {
+    font-size: 40px;
+  }
+
+  .page-subtitle {
+    font-size: 18px;
   }
 
   .teams-grid {
     grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .team-card {
+    padding: 28px 24px;
+  }
+
+  .team-rank {
+    width: 45px;
+    height: 45px;
+    font-size: 16px;
+  }
+
+  .team-name {
+    font-size: 22px;
+  }
+
+  .project-title {
+    font-size: 15px;
+  }
+
+  .member-name {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header h1 {
+    font-size: 32px;
+  }
+
+  .page-subtitle {
+    font-size: 16px;
+  }
+
+  .team-card {
+    padding: 24px 20px;
+  }
+
+  .team-logo-container {
+    width: 80px;
+    height: 80px;
+  }
+
+  .team-name {
+    font-size: 20px;
+  }
+
+  .project-title {
+    font-size: 14px;
+  }
+
+  .members-header {
+    font-size: 15px;
+  }
+
+  .member-item {
+    padding: 10px 14px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .member-dept {
+    align-self: flex-start;
   }
 }
