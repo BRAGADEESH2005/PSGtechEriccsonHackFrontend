@@ -1,5 +1,6 @@
 // API Configuration
-export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+// export const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:5000/api';
+export const API_BASE_URL = 'https://ps-gtech-ericcson-backend-i2r793ldn-bragadeesh2005s-projects.vercel.app';
 
 // Admin Configuration
 export const ADMIN_PASSWORD = 'admin@ericsson2024';
