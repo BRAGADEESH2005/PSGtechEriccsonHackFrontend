@@ -76,7 +76,7 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
     { number: "30+", label: "Teams Competing" },
     { number: "15", label: "Finalist Teams" },
     { number: "3", label: "Departments" },
-    { number: "48hrs", label: "Innovation Time" },
+    { number: "30hrs", label: "Innovation Time" },
   ];
 
   // Determine which buttons to show based on user status
@@ -149,8 +149,8 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
           </div>
 
           <h1 className="hero-title">
-            <span className="title-line">Innovation</span>
-            <span className="title-line highlight">Hackathon 2024</span>
+            <span className="title-line">Collaborative Robots</span>
+            <span className="title-line highlight">Hackathon 2026</span>
           </h1>
 
           <p className="hero-description">
@@ -214,8 +214,8 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
       >
         <div className="section-container">
           <div className="section-header">
-            <span className="section-tag">Why Participate</span>
-            <h2 className="section-title">What Makes Us Different</h2>
+            {/* <span className="section-tag">Why Participate</span> */}
+            <h2 className="section-title">Participate To</h2>
             <p className="section-description">
               Experience the perfect blend of learning, innovation, and
               competition
@@ -288,7 +288,7 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
             <div className="footer-column">
               <h3 className="footer-logo">
                 <span className="logo-icon">⚡</span>
-                Ericsson Hackathon
+                Collaborative Robots Hackathon
               </h3>
               <p className="footer-description">
                 Empowering the next generation of innovators through

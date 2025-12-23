@@ -8,7 +8,7 @@ const AdminPanel = () => {
   const [password, setPassword] = useState('');
   const [activeTab, setActiveTab] = useState('proposals');
   const [proposals, setProposals] = useState([]);
-  const [selectedProposals, setSelectedProposals] = useState([]);
+  const [selectedCount, setSelectedCount] = useState(0);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -24,23 +24,38 @@ const AdminPanel = () => {
   const [deadline, setDeadline] = useState('');
   const [currentDeadline, setCurrentDeadline] = useState(null);
 
+  // Check for stored admin session on mount
+  useEffect(() => {
+    const storedAuth = localStorage.getItem('hackathon_admin_auth');
+    if (storedAuth === 'true') {
+      setAuthenticated(true);
+    }
+  }, []);
+
   useEffect(() => {
     if (authenticated) {
       fetchProposals();
       fetchSettings();
+      fetchSelectedCount();
     }
   }, [authenticated]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    console.log("Admin attempting login with password:", password,ADMIN_PASSWORD);
 
     if (password === ADMIN_PASSWORD) {
       setAuthenticated(true);
+      localStorage.setItem('hackathon_admin_auth', 'true');
       setError('');
     } else {
       setError('Invalid admin password');
     }
+  };
+
+  const handleLogout = () => {
+    setAuthenticated(false);
+    localStorage.removeItem('hackathon_admin_auth');
+    setPassword('');
   };
 
   const fetchProposals = async () => {
@@ -57,6 +72,17 @@ const AdminPanel = () => {
     }
   };
 
+  const fetchSelectedCount = async () => {
+    try {
+      const response = await axios.post(`${API_BASE_URL}/admin/selected-count`, {
+        password: ADMIN_PASSWORD
+      });
+      setSelectedCount(response.data.count);
+    } catch (err) {
+      console.error('Error fetching selected count:', err);
+    }
+  };
+
   const fetchSettings = async () => {
     try {
       const response = await axios.get(`${API_BASE_URL}/admin/settings`);
@@ -69,37 +95,35 @@ const AdminPanel = () => {
     }
   };
 
-  const handleSelectTeam = (proposalId) => {
-    setSelectedProposals(prev => {
-      if (prev.includes(proposalId)) {
-        return prev.filter(id => id !== proposalId);
-      } else if (prev.length < 15) {
-        return [...prev, proposalId];
-      } else {
-        setError('You can only select 15 teams');
-        return prev;
-      }
-    });
-  };
-
-  const handleConfirmSelection = async () => {
-    if (selectedProposals.length !== 15) {
-      setError('Please select exactly 15 teams');
+  const handleToggleSelection = async (proposalId, currentStatus) => {
+    const action = currentStatus === 'selected' ? 'deselect' : 'select';
+    
+    // Show confirmation dialog
+    const confirmMessage = currentStatus === 'selected' 
+      ? 'Are you sure you want to deselect this team?'
+      : 'Are you sure you want to select this team for the hackathon?';
+    
+    if (!window.confirm(confirmMessage)) {
       return;
     }
 
     try {
       setLoading(true);
-      await axios.post(`${API_BASE_URL}/admin/select-teams`, {
-        password: ADMIN_PASSWORD,
-        teamIds: selectedProposals
-      });
-      setSuccess('15 teams selected successfully!');
-      fetchProposals();
-      setSelectedProposals([]);
-      setTimeout(() => setSuccess(''), 3000);
+      const response = await axios.post(
+        `${API_BASE_URL}/admin/toggle-selection/${proposalId}`,
+        { password: ADMIN_PASSWORD }
+      );
+
+      if (response.data.success) {
+        setSuccess(response.data.message);
+        await fetchProposals();
+        await fetchSelectedCount();
+        setTimeout(() => setSuccess(''), 3000);
+      }
     } catch (err) {
-      setError('Failed to select teams');
+      const errorMessage = err.response?.data?.message || 'Failed to toggle selection';
+      setError(errorMessage);
+      setTimeout(() => setError(''), 5000);
     } finally {
       setLoading(false);
     }
@@ -258,7 +282,7 @@ const AdminPanel = () => {
       <div className="container">
         <div className="admin-header">
           <h1>Admin Panel</h1>
-          <button onClick={() => setAuthenticated(false)} className="btn btn-secondary">
+          <button onClick={handleLogout} className="btn btn-secondary">
             Logout
           </button>
         </div>
@@ -291,20 +315,11 @@ const AdminPanel = () => {
           {activeTab === 'proposals' && (
             <div className="proposals-section">
               <div className="selection-header">
-                <h2>Select 15 Teams for Hackathon</h2>
+                <h2>Team Selection for Hackathon</h2>
                 <div className="selection-info">
                   <span className="selection-count">
-                    Selected: {selectedProposals.length}/15
+                    Selected: {selectedCount}/15
                   </span>
-                  {selectedProposals.length === 15 && (
-                    <button
-                      onClick={handleConfirmSelection}
-                      className="btn btn-success"
-                      disabled={loading}
-                    >
-                      Confirm Selection
-                    </button>
-                  )}
                 </div>
               </div>
 
@@ -318,9 +333,7 @@ const AdminPanel = () => {
                   {proposals.map((proposal) => (
                     <div
                       key={proposal._id}
-                      className={`proposal-card ${proposal.status === 'selected' ? 'selected' : ''} ${
-                        selectedProposals.includes(proposal._id) ? 'temp-selected' : ''
-                      }`}
+                      className={`proposal-card ${proposal.status === 'selected' ? 'selected' : ''}`}
                     >
                       <div className="proposal-header">
                         <div>
@@ -348,15 +361,16 @@ const AdminPanel = () => {
                           View Details
                         </button>
                         <button
-                          onClick={() => handleSelectTeam(proposal._id)}
+                          onClick={() => handleToggleSelection(proposal._id, proposal.status)}
                           className={`btn btn-sm ${
-                            selectedProposals.includes(proposal._id) ? 'btn-danger' : 'btn-success'
+                            proposal.status === 'selected' ? 'btn-danger' : 'btn-success'
                           }`}
                           disabled={
-                            !selectedProposals.includes(proposal._id) && selectedProposals.length >= 15
+                            loading || 
+                            (proposal.status !== 'selected' && selectedCount >= 15)
                           }
                         >
-                          {selectedProposals.includes(proposal._id) ? 'Deselect' : 'Select'}
+                          {proposal.status === 'selected' ? 'Deselect' : 'Select'}
                         </button>
                       </div>
 
