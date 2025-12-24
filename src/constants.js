@@ -1,7 +1,7 @@
 // API Configuration
 // export const API_BASE_URL =
-  // process.env.REACT_APP_API_URL || "http://localhost:5000/api";
-export const API_BASE_URL = 'https://ps-gtech-ericcson-backend.vercel.app/api';
+// process.env.REACT_APP_API_URL || "http://localhost:5000/api";
+export const API_BASE_URL = "https://ps-gtech-ericcson-backend.vercel.app/api";
 
 // Admin Configuration
 export const ADMIN_PASSWORD = "admin@ericsson2024";
@@ -15,6 +15,8 @@ export const DEPARTMENTS = ["ECE", "CSE", "RAE"];
 // Team Credentials (Pre-registered teams)
 export const TEAM_CREDENTIALS = [
   { teamName: "Alpha", password: "923700" },
+  { teamName: "Latency Zero", password: "844287" },
+  { teamName: "Tricore", password: "499619" },
   { teamName: "VoxNova", password: "255695" },
   { teamName: "Infoverse", password: "914781" },
   { teamName: "RoboX Revolt", password: "397181" },
