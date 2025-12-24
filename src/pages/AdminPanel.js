@@ -1,33 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import axios from 'axios';
-import { API_BASE_URL, ADMIN_PASSWORD } from '../constants';
-import './AdminPanel.css';
+import React, { useState, useEffect } from "react";
+import axios from "axios";
+import { API_BASE_URL, ADMIN_PASSWORD } from "../constants";
+import "./AdminPanel.css";
+import { jsPDF } from "jspdf";
 
 const AdminPanel = () => {
   const [authenticated, setAuthenticated] = useState(false);
-  const [password, setPassword] = useState('');
-  const [activeTab, setActiveTab] = useState('proposals');
+  const [password, setPassword] = useState("");
+  const [activeTab, setActiveTab] = useState("proposals");
   const [proposals, setProposals] = useState([]);
   const [selectedCount, setSelectedCount] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   // Announcement form
   const [announcementForm, setAnnouncementForm] = useState({
-    title: '',
-    content: '',
-    priority: 'medium'
+    title: "",
+    content: "",
+    priority: "medium",
   });
 
   // Deadline form
-  const [deadline, setDeadline] = useState('');
+  const [deadline, setDeadline] = useState("");
   const [currentDeadline, setCurrentDeadline] = useState(null);
 
   // Check for stored admin session on mount
   useEffect(() => {
-    const storedAuth = localStorage.getItem('hackathon_admin_auth');
-    if (storedAuth === 'true') {
+    const storedAuth = localStorage.getItem("hackathon_admin_auth");
+    if (storedAuth === "true") {
       setAuthenticated(true);
     }
   }, []);
@@ -40,33 +41,122 @@ const AdminPanel = () => {
     }
   }, [authenticated]);
 
+  const downloadProposalPDF = (proposal) => {
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const margin = 20;
+    const maxWidth = pageWidth - 2 * margin;
+    let yPosition = margin;
+
+    // Helper function to add text with word wrap
+    const addText = (text, fontSize = 12, isBold = false) => {
+      doc.setFontSize(fontSize);
+      doc.setFont(undefined, isBold ? "bold" : "normal");
+      const lines = doc.splitTextToSize(text, maxWidth);
+
+      lines.forEach((line) => {
+        if (yPosition > pageHeight - margin) {
+          doc.addPage();
+          yPosition = margin;
+        }
+        doc.text(line, margin, yPosition);
+        yPosition += fontSize * 0.5;
+      });
+      yPosition += 5;
+    };
+
+    // Title
+    doc.setFontSize(18);
+    doc.setFont(undefined, "bold");
+    doc.text(proposal.projectTitle, margin, yPosition);
+    yPosition += 15;
+
+    // Status badge
+    doc.setFontSize(10);
+    doc.setFont(undefined, "normal");
+    doc.text(`Status: ${proposal.status.toUpperCase()}`, margin, yPosition);
+    yPosition += 15;
+
+    // Team Information
+    addText("TEAM INFORMATION", 14, true);
+    addText(`Team Name: ${proposal.teamName}`, 12);
+
+    addText("Team Members:", 12, true);
+    proposal.students.forEach((student) => {
+      addText(
+        `• ${student.name} (${student.department}) - ${student.email}`,
+        11
+      );
+    });
+
+    // Team Composition
+    addText("TEAM COMPOSITION", 14, true);
+    addText(proposal.teamComposition, 11);
+
+    // Problem Statement
+    addText("PROBLEM STATEMENT", 14, true);
+    addText(proposal.problemStatement, 11);
+
+    // Tools & Methodology
+    addText("TOOLS & METHODOLOGY", 14, true);
+    addText(proposal.toolsAndMethodology, 11);
+
+    // Implementation Plan
+    addText("IMPLEMENTATION PLAN", 14, true);
+    addText(proposal.implementationPlan, 11);
+
+    // Project Flow Slides
+    addText("PROJECT FLOW SLIDES", 14, true);
+    addText(proposal.projectFlowSlides, 11);
+
+    // Expected Results
+    addText("EXPECTED RESULTS", 14, true);
+    addText(proposal.expectedResults, 11);
+
+    // Additional Details
+    if (proposal.additionalDetails) {
+      addText("ADDITIONAL DETAILS", 14, true);
+      addText(proposal.additionalDetails, 11);
+    }
+
+    // Submission Details
+    addText("SUBMISSION DETAILS", 14, true);
+    addText(
+      `Submitted: ${new Date(proposal.submittedAt).toLocaleString()}`,
+      11
+    );
+
+    // Save PDF
+    doc.save(`${proposal.teamName}_Proposal.pdf`);
+  };
   const handleLogin = (e) => {
     e.preventDefault();
 
     if (password === ADMIN_PASSWORD) {
       setAuthenticated(true);
-      localStorage.setItem('hackathon_admin_auth', 'true');
-      setError('');
+      localStorage.setItem("hackathon_admin_auth", "true");
+      setError("");
     } else {
-      setError('Invalid admin password');
+      setError("Invalid admin password");
     }
   };
 
   const handleLogout = () => {
     setAuthenticated(false);
-    localStorage.removeItem('hackathon_admin_auth');
-    setPassword('');
+    localStorage.removeItem("hackathon_admin_auth");
+    setPassword("");
   };
 
   const fetchProposals = async () => {
     try {
       setLoading(true);
       const response = await axios.post(`${API_BASE_URL}/admin/proposals`, {
-        password: ADMIN_PASSWORD
+        password: ADMIN_PASSWORD,
       });
       setProposals(response.data);
     } catch (err) {
-      setError('Failed to fetch proposals');
+      setError("Failed to fetch proposals");
     } finally {
       setLoading(false);
     }
@@ -74,12 +164,15 @@ const AdminPanel = () => {
 
   const fetchSelectedCount = async () => {
     try {
-      const response = await axios.post(`${API_BASE_URL}/admin/selected-count`, {
-        password: ADMIN_PASSWORD
-      });
+      const response = await axios.post(
+        `${API_BASE_URL}/admin/selected-count`,
+        {
+          password: ADMIN_PASSWORD,
+        }
+      );
       setSelectedCount(response.data.count);
     } catch (err) {
-      console.error('Error fetching selected count:', err);
+      console.error("Error fetching selected count:", err);
     }
   };
 
@@ -88,21 +181,24 @@ const AdminPanel = () => {
       const response = await axios.get(`${API_BASE_URL}/admin/settings`);
       if (response.data) {
         setCurrentDeadline(response.data.submissionDeadline);
-        setDeadline(new Date(response.data.submissionDeadline).toISOString().slice(0, 16));
+        setDeadline(
+          new Date(response.data.submissionDeadline).toISOString().slice(0, 16)
+        );
       }
     } catch (err) {
-      console.error('Error fetching settings:', err);
+      console.error("Error fetching settings:", err);
     }
   };
 
   const handleToggleSelection = async (proposalId, currentStatus) => {
-    const action = currentStatus === 'selected' ? 'deselect' : 'select';
-    
+    const action = currentStatus === "selected" ? "deselect" : "select";
+
     // Show confirmation dialog
-    const confirmMessage = currentStatus === 'selected' 
-      ? 'Are you sure you want to deselect this team?'
-      : 'Are you sure you want to select this team for the hackathon?';
-    
+    const confirmMessage =
+      currentStatus === "selected"
+        ? "Are you sure you want to deselect this team?"
+        : "Are you sure you want to select this team for the hackathon?";
+
     if (!window.confirm(confirmMessage)) {
       return;
     }
@@ -118,12 +214,13 @@ const AdminPanel = () => {
         setSuccess(response.data.message);
         await fetchProposals();
         await fetchSelectedCount();
-        setTimeout(() => setSuccess(''), 3000);
+        setTimeout(() => setSuccess(""), 3000);
       }
     } catch (err) {
-      const errorMessage = err.response?.data?.message || 'Failed to toggle selection';
+      const errorMessage =
+        err.response?.data?.message || "Failed to toggle selection";
       setError(errorMessage);
-      setTimeout(() => setError(''), 5000);
+      setTimeout(() => setError(""), 5000);
     } finally {
       setLoading(false);
     }
@@ -135,13 +232,13 @@ const AdminPanel = () => {
       setLoading(true);
       await axios.post(`${API_BASE_URL}/admin/announcements`, {
         password: ADMIN_PASSWORD,
-        ...announcementForm
+        ...announcementForm,
       });
-      setSuccess('Announcement posted successfully!');
-      setAnnouncementForm({ title: '', content: '', priority: 'medium' });
-      setTimeout(() => setSuccess(''), 3000);
+      setSuccess("Announcement posted successfully!");
+      setAnnouncementForm({ title: "", content: "", priority: "medium" });
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError('Failed to post announcement');
+      setError("Failed to post announcement");
     } finally {
       setLoading(false);
     }
@@ -153,20 +250,20 @@ const AdminPanel = () => {
       setLoading(true);
       await axios.post(`${API_BASE_URL}/admin/deadline`, {
         password: ADMIN_PASSWORD,
-        deadline: new Date(deadline)
+        deadline: new Date(deadline),
       });
-      setSuccess('Deadline updated successfully!');
+      setSuccess("Deadline updated successfully!");
       setCurrentDeadline(deadline);
-      setTimeout(() => setSuccess(''), 3000);
+      setTimeout(() => setSuccess(""), 3000);
     } catch (err) {
-      setError('Failed to update deadline');
+      setError("Failed to update deadline");
     } finally {
       setLoading(false);
     }
   };
 
   const viewProposalDetails = (proposal) => {
-    const win = window.open('', '_blank');
+    const win = window.open("", "_blank");
     win.document.write(`
       <html>
         <head>
@@ -186,20 +283,30 @@ const AdminPanel = () => {
         </head>
         <body>
           <h1>${proposal.projectTitle}</h1>
-          <p><span class="badge status-${proposal.status}">${proposal.status.toUpperCase()}</span></p>
+          <p><span class="badge status-${
+            proposal.status
+          }">${proposal.status.toUpperCase()}</span></p>
           
-          ${proposal.projectLogo ? `<img src="${proposal.projectLogo}" class="logo" alt="Logo">` : ''}
+          ${
+            proposal.projectLogo
+              ? `<img src="${proposal.projectLogo}" class="logo" alt="Logo">`
+              : ""
+          }
           
           <h2>Team Information</h2>
           <div class="section">
             <p><span class="label">Team Name:</span> ${proposal.teamName}</p>
             <h3>Members:</h3>
-            ${proposal.students.map(s => `
+            ${proposal.students
+              .map(
+                (s) => `
               <div class="student">
                 <strong>${s.name}</strong> (${s.department})<br>
                 ${s.email}
               </div>
-            `).join('')}
+            `
+              )
+              .join("")}
           </div>
 
           <h2>Team Composition</h2>
@@ -224,7 +331,9 @@ const AdminPanel = () => {
 
           <h2>Project Flow Slides</h2>
           <div class="section">
-            <a href="${proposal.projectFlowSlides}" target="_blank">${proposal.projectFlowSlides}</a>
+            <a href="${proposal.projectFlowSlides}" target="_blank">${
+      proposal.projectFlowSlides
+    }</a>
           </div>
 
           <h2>Expected Results</h2>
@@ -232,16 +341,22 @@ const AdminPanel = () => {
             <p>${proposal.expectedResults}</p>
           </div>
 
-          ${proposal.additionalDetails ? `
+          ${
+            proposal.additionalDetails
+              ? `
             <h2>Additional Details</h2>
             <div class="section">
               <p>${proposal.additionalDetails}</p>
             </div>
-          ` : ''}
+          `
+              : ""
+          }
 
           <h2>Submission Details</h2>
           <div class="section">
-            <p><span class="label">Submitted:</span> ${new Date(proposal.submittedAt).toLocaleString()}</p>
+            <p><span class="label">Submitted:</span> ${new Date(
+              proposal.submittedAt
+            ).toLocaleString()}</p>
           </div>
         </body>
       </html>
@@ -292,27 +407,29 @@ const AdminPanel = () => {
 
         <div className="admin-tabs">
           <button
-            className={`tab-btn ${activeTab === 'proposals' ? 'active' : ''}`}
-            onClick={() => setActiveTab('proposals')}
+            className={`tab-btn ${activeTab === "proposals" ? "active" : ""}`}
+            onClick={() => setActiveTab("proposals")}
           >
             Proposals ({proposals.length})
           </button>
           <button
-            className={`tab-btn ${activeTab === 'announcements' ? 'active' : ''}`}
-            onClick={() => setActiveTab('announcements')}
+            className={`tab-btn ${
+              activeTab === "announcements" ? "active" : ""
+            }`}
+            onClick={() => setActiveTab("announcements")}
           >
             Post Announcement
           </button>
           <button
-            className={`tab-btn ${activeTab === 'deadline' ? 'active' : ''}`}
-            onClick={() => setActiveTab('deadline')}
+            className={`tab-btn ${activeTab === "deadline" ? "active" : ""}`}
+            onClick={() => setActiveTab("deadline")}
           >
             Manage Deadline
           </button>
         </div>
 
         <div className="admin-content">
-          {activeTab === 'proposals' && (
+          {activeTab === "proposals" && (
             <div className="proposals-section">
               <div className="selection-header">
                 <h2>Team Selection for Hackathon</h2>
@@ -333,12 +450,16 @@ const AdminPanel = () => {
                   {proposals.map((proposal) => (
                     <div
                       key={proposal._id}
-                      className={`proposal-card ${proposal.status === 'selected' ? 'selected' : ''}`}
+                      className={`proposal-card ${
+                        proposal.status === "selected" ? "selected" : ""
+                      }`}
                     >
                       <div className="proposal-header">
                         <div>
                           <h3>{proposal.teamName}</h3>
-                          <p className="project-title">{proposal.projectTitle}</p>
+                          <p className="project-title">
+                            {proposal.projectTitle}
+                          </p>
                         </div>
                         <span className={`status-badge ${proposal.status}`}>
                           {proposal.status}
@@ -361,21 +482,35 @@ const AdminPanel = () => {
                           View Details
                         </button>
                         <button
-                          onClick={() => handleToggleSelection(proposal._id, proposal.status)}
+                          onClick={() => downloadProposalPDF(proposal)}
+                          className="btn btn-sm btn-info"
+                        >
+                          Download PDF
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleToggleSelection(proposal._id, proposal.status)
+                          }
                           className={`btn btn-sm ${
-                            proposal.status === 'selected' ? 'btn-danger' : 'btn-success'
+                            proposal.status === "selected"
+                              ? "btn-danger"
+                              : "btn-success"
                           }`}
                           disabled={
-                            loading || 
-                            (proposal.status !== 'selected' && selectedCount >= 15)
+                            loading ||
+                            (proposal.status !== "selected" &&
+                              selectedCount >= 15)
                           }
                         >
-                          {proposal.status === 'selected' ? 'Deselect' : 'Select'}
+                          {proposal.status === "selected"
+                            ? "Deselect"
+                            : "Select"}
                         </button>
                       </div>
 
                       <div className="proposal-date">
-                        Submitted: {new Date(proposal.submittedAt).toLocaleDateString()}
+                        Submitted:{" "}
+                        {new Date(proposal.submittedAt).toLocaleDateString()}
                       </div>
                     </div>
                   ))}
@@ -384,10 +519,13 @@ const AdminPanel = () => {
             </div>
           )}
 
-          {activeTab === 'announcements' && (
+          {activeTab === "announcements" && (
             <div className="announcements-section">
               <h2>Post New Announcement</h2>
-              <form onSubmit={handlePostAnnouncement} className="announcement-form">
+              <form
+                onSubmit={handlePostAnnouncement}
+                className="announcement-form"
+              >
                 <div className="form-group">
                   <label>Title *</label>
                   <input
@@ -395,7 +533,10 @@ const AdminPanel = () => {
                     className="form-control"
                     value={announcementForm.title}
                     onChange={(e) =>
-                      setAnnouncementForm({ ...announcementForm, title: e.target.value })
+                      setAnnouncementForm({
+                        ...announcementForm,
+                        title: e.target.value,
+                      })
                     }
                     placeholder="Announcement title"
                     required
@@ -408,7 +549,10 @@ const AdminPanel = () => {
                     className="form-control"
                     value={announcementForm.content}
                     onChange={(e) =>
-                      setAnnouncementForm({ ...announcementForm, content: e.target.value })
+                      setAnnouncementForm({
+                        ...announcementForm,
+                        content: e.target.value,
+                      })
                     }
                     placeholder="Announcement content"
                     rows="6"
@@ -422,7 +566,10 @@ const AdminPanel = () => {
                     className="form-control"
                     value={announcementForm.priority}
                     onChange={(e) =>
-                      setAnnouncementForm({ ...announcementForm, priority: e.target.value })
+                      setAnnouncementForm({
+                        ...announcementForm,
+                        priority: e.target.value,
+                      })
                     }
                   >
                     <option value="low">Low</option>
@@ -431,28 +578,34 @@ const AdminPanel = () => {
                   </select>
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? 'Posting...' : 'Post Announcement'}
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? "Posting..." : "Post Announcement"}
                 </button>
               </form>
             </div>
           )}
 
-          {activeTab === 'deadline' && (
+          {activeTab === "deadline" && (
             <div className="deadline-section">
               <h2>Manage Submission Deadline</h2>
-              
+
               {currentDeadline && (
                 <div className="current-deadline">
-                  <p><strong>Current Deadline:</strong></p>
+                  <p>
+                    <strong>Current Deadline:</strong>
+                  </p>
                   <p className="deadline-date">
-                    {new Date(currentDeadline).toLocaleString('en-US', {
-                      weekday: 'long',
-                      year: 'numeric',
-                      month: 'long',
-                      day: 'numeric',
-                      hour: '2-digit',
-                      minute: '2-digit'
+                    {new Date(currentDeadline).toLocaleString("en-US", {
+                      weekday: "long",
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                      hour: "2-digit",
+                      minute: "2-digit",
                     })}
                   </p>
                 </div>
@@ -470,8 +623,12 @@ const AdminPanel = () => {
                   />
                 </div>
 
-                <button type="submit" className="btn btn-primary" disabled={loading}>
-                  {loading ? 'Updating...' : 'Update Deadline'}
+                <button
+                  type="submit"
+                  className="btn btn-primary"
+                  disabled={loading}
+                >
+                  {loading ? "Updating..." : "Update Deadline"}
                 </button>
               </form>
             </div>
