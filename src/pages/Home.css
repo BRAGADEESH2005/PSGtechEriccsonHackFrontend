@@ -1491,3 +1491,23 @@
   border-color: rgba(102, 126, 234, 0.5);
   box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
 }
+
+
+.footer-developer {
+  text-align: center;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  font-size: 0.875rem;
+  opacity: 0.8;
+}
+
+.footer-developer a {
+  color: inherit;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.footer-developer a:hover {
+  color: #00aaff;
+  text-decoration: underline;
+}

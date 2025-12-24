@@ -283,7 +283,7 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
             </p>
           </div>
 
-                    <div className="timeline-wrapper">
+          <div className="timeline-wrapper">
             <div className="timeline-line"></div>
             {timeline.map((item, index) => (
               <div
@@ -423,6 +423,22 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
                 <span className="separator">•</span>
                 <a href="#">Cookie Policy</a>
               </div>
+            </div>
+            <div className="footer-developer">
+              <p>
+                Developed by{" "}
+                <a
+                  href="https://github.com/BRAGADEESH2005"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Bragadeesh V
+                </a>
+                {" • "}
+                <a href="mailto:bragadeesh2005@gmail.com">
+                  bragadeesh2005@gmail.com
+                </a>
+              </p>
             </div>
           </div>
         </div>
