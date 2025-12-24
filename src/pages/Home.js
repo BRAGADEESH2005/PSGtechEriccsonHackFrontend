@@ -44,31 +44,59 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
   const timeline = [
     {
       phase: "Phase 1",
-      title: "Team Registration",
+      title: "Team Formation",
+      date: "Dec 8-17, 2025",
       description:
         "Form your interdisciplinary team and register for the hackathon",
       icon: "📝",
     },
     {
       phase: "Phase 2",
-      title: "Proposal Submission",
+      title: "Problem Statement Announcement",
+      date: "Dec 17, 2025",
       description:
-        "Submit your innovative project proposal with detailed implementation plan",
-      icon: "📊",
+        "Official problem statement released to all registered teams",
+      icon: "📢",
     },
     {
       phase: "Phase 3",
-      title: "Team Selection",
+      title: "Proposal Development",
+      date: "Dec 17-25, 2025",
       description:
-        "15 teams will be selected to participate in the main hackathon event",
-      icon: "✨",
+        "Develop your innovative project proposal with detailed implementation plan",
+      icon: "📊",
     },
     {
       phase: "Phase 4",
-      title: "Hackathon Event",
+      title: "Proposal Submission",
+      date: "Dec 25, 2025",
+      description:
+        "Submit your finalized proposal for evaluation and team selection",
+      icon: "✨",
+    },
+    {
+      phase: "Phase 5",
+      title: "Proposal Analysis & Feedback",
+      date: "Dec 26, 2025",
+      description:
+        "Expert evaluation of proposals and selection of 15 finalist teams",
+      icon: "🔍",
+    },
+    {
+      phase: "Phase 6",
+      title: "30-Hour Hackathon",
+      date: "Jan 3-4, 2026",
       description:
         "Build your solution and present to the jury for final evaluation",
       icon: "🎯",
+    },
+    {
+      phase: "Phase 7",
+      title: "Internship & Training",
+      date: "Apr-May 2026",
+      description:
+        "Selected winners receive internship opportunities and advanced training",
+      icon: "🚀",
     },
   ];
 
@@ -255,7 +283,7 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
             </p>
           </div>
 
-          <div className="timeline-wrapper">
+                    <div className="timeline-wrapper">
             <div className="timeline-line"></div>
             {timeline.map((item, index) => (
               <div
@@ -272,6 +300,7 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
                   <div className="timeline-card">
                     <span className="timeline-phase">{item.phase}</span>
                     <h3 className="timeline-title">{item.title}</h3>
+                    <span className="timeline-date">{item.date}</span>
                     <p className="timeline-description">{item.description}</p>
                   </div>
                 </div>
@@ -354,15 +383,28 @@ const Home = ({ isLoggedIn, hasSubmittedProposal, onLoginClick, teamName }) => {
               <ul className="footer-contact">
                 <li>
                   <span className="contact-icon">📧</span>
-                  <span>hackathon@ericsson.com</span>
+                  <span>22l227@psgtech.ac.in</span>
                 </li>
                 <li>
                   <span className="contact-icon">📱</span>
-                  <span>+91 98765 43210</span>
+                  <span>+91 86808 17413</span>
                 </li>
                 <li>
-                  <span className="contact-icon">📍</span>
-                  <span>PSG College of Technology</span>
+                  <span className="contact-icon">👤</span>
+                  <span>JAYA SURYA (ECE)</span>
+                </li>
+                <li className="contact-divider"></li>
+                <li>
+                  <span className="contact-icon">📧</span>
+                  <span>23Z431@psgtech.ac.in</span>
+                </li>
+                <li>
+                  <span className="contact-icon">📱</span>
+                  <span>+91 94448 66750</span>
+                </li>
+                <li>
+                  <span className="contact-icon">👤</span>
+                  <span>DWARKESH (CSE)</span>
                 </li>
               </ul>
             </div>

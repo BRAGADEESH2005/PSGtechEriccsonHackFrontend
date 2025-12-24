@@ -1108,10 +1108,12 @@
 }
 
 @keyframes wave {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(0deg);
   }
-  10%, 30% {
+  10%,
+  30% {
     transform: rotate(14deg);
   }
   20% {
@@ -1160,7 +1162,8 @@
 }
 
 @keyframes successPulse {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 12px rgba(76, 175, 80, 0.3);
   }
   50% {
@@ -1427,3 +1430,64 @@
 }
 
 /* ...existing code... */
+/* Add to your existing Home.css file */
+
+.footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.footer-contact li {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.footer-contact .contact-icon {
+  font-size: 1.2rem;
+  min-width: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.footer-contact .contact-divider {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: 1rem 0;
+  border: none;
+}
+
+.footer-contact li:hover {
+  color: rgba(255, 255, 255, 1);
+}
+
+/* Add these styles to your existing Home.css */
+
+.timeline-date {
+  display: block;
+  color: #667eea;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0.5rem 0;
+  letter-spacing: 0.3px;
+}
+
+.timeline-card {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 16px;
+  padding: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+.timeline-card:hover {
+  transform: translateY(-5px);
+  border-color: rgba(102, 126, 234, 0.5);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.2);
+}
