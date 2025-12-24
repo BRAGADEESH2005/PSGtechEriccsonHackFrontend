@@ -45,6 +45,7 @@ export const TEAM_CREDENTIALS = [
   { teamName: "CoBot Connect", password: "771901" },
   { teamName: "Tech Titans", password: "810709" },
   { teamName: "Robo", password: "572501" },
+  { teamName: "Wakamaru", password: "119334" },
 ];
 
 // ...existing code...
