@@ -49,6 +49,7 @@ export const TEAM_CREDENTIALS = [
   { teamName: "Fusion minds", password: "802986" },
   { teamName: "Ingenix", password: "448053" },
   { teamName: "Nano chips", password: "092501" },
+  { teamName: "Hackians", password: "470517" },
 ];
 
 // ...existing code...
